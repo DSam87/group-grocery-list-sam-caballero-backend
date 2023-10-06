@@ -141,7 +141,6 @@ const deleteUser = asyncHandler(async (req, res, next) => {
   }
 
   const user = await User.findOne({ email, password, familyGroupId }).exec();
-  console.log(user);
   if (!user) return res.status(400).json({ message: "No user found" });
 
   const familyGroup = await FamilyGroup.findOne({ familyGroupId });

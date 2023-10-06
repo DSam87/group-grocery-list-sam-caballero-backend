@@ -7,7 +7,6 @@ const asyncHandler = require("express-async-handler");
 // @route POST /auth
 // @access Public
 const login = asyncHandler(async (req, res) => {
-  console.log("Login");
   const {
     email,
     password,
@@ -17,18 +16,6 @@ const login = asyncHandler(async (req, res) => {
     isSignup,
     isGroupSignup,
   } = req.body;
-
-  console.log(
-    email,
-    password,
-    lastName,
-    username,
-    familyGroupId,
-    isSignup,
-    isGroupSignup
-  );
-
-  console.log("HERE IN LOGIN");
 
   // checking user input values
   if (isSignup && (!email || !password || !username || !familyGroupId)) {
@@ -70,10 +57,6 @@ const login = asyncHandler(async (req, res) => {
       username,
       familyGroupId,
     });
-
-    console.log(
-      "NEW FAMILY GROUPNEW FAMILY GROUPNEW FAMILY GROUPNEW FAMILY GROUPNEW FAMILY GROUP"
-    );
 
     newFamilyGroup.users.push(newUser._id);
 
@@ -117,7 +100,6 @@ const login = asyncHandler(async (req, res) => {
   // Signup
   // /////////////////////////////////////////////
   if (isSignup) {
-    console.log("SIGN UP!!!!");
     // check if the email already exists in the db
     const duplicateEmail = await User.findOne({ email: email });
     const foundGroup = await FamilyGroup.findOne({
@@ -136,9 +118,6 @@ const login = asyncHandler(async (req, res) => {
     await newUser.save();
 
     // check the familygroup and add a new user _id to the group users array
-
-    console.log(newUser);
-    console.log(typeof newUser);
 
     const accessToken = jwt.sign(
       {
@@ -176,10 +155,6 @@ const login = asyncHandler(async (req, res) => {
   // Login
   // /////////////////////////////////////////////
   if (!isSignup && !isGroupSignup) {
-    console.log(email);
-    console.log(password);
-    console.log("HERE");
-
     // check if the email exists already in the users database
     const foundUser = await User.findOne({ email }).exec();
     const unHashedPassword = bcrypt.compare(password, foundUser.password);
@@ -246,24 +221,17 @@ const refresh = (req, res) => {
       if (err) return res.status(403).json({ message: "Forbidden" });
 
       const foundUser = await User.findOne({ email: decoded.email }).exec();
-      console.log("REFREASH REFREASH REFREASH REFREASH REFREASH ");
-      console.log(foundUser);
 
       if (!foundUser) return res.status(403).json({ message: "Unauthorized" });
 
       const foundFamilyGroup = await FamilyGroup.findOne({
         familyGroupId: foundUser.familyGroupId,
       }).exec();
-      console.log("REFREASH REFREASH REFREASH REFREASH REFREASH ");
-      console.log(foundFamilyGroup);
 
       if (!foundFamilyGroup)
         return res.status(401).json({
           message: "User needs to update Family group id. No group found.",
         });
-
-      console.log(foundUser);
-      console.log(foundFamilyGroup);
 
       const accessToken = jwt.sign(
         {
@@ -280,7 +248,6 @@ const refresh = (req, res) => {
           expiresIn: "30m",
         }
       );
-      console.log(accessToken);
       res.json({ accessToken });
     })
   );

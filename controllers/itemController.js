@@ -39,28 +39,12 @@ const getAllItems = asyncHandler(async (req, res, next) => {
         return item;
       });
 
-      // const populatedItems = await Promise.all(
-      //   foundItems.map(async (item) => {
-      //     let returnItem = item;
-      //     const populatedItem = await item.populate("user", "username");
-      //     returnItem.username = populatedItem.user.username;
-      //     console.log(returnItem);
-      //     return returnItem;
-      //   })
-      // );
-
       if (!returnFoundItems)
         return res.status(401).json({ message: "No Notes Found" });
 
       return res.status(200).json(returnFoundItems);
     })
   );
-  // const groceryItems = await GroceryItem.find({}).lean().exec();
-  // console.log(groceryItems);
-  // if (groceryItems.length) {
-  //   return res.status(200).json(groceryItems);
-  // }
-  // return res.status(400).json({ message: "No items found" });
 });
 
 const postItem = asyncHandler(async (req, res, next) => {
@@ -83,15 +67,10 @@ const postItem = asyncHandler(async (req, res, next) => {
       if (err) return res.status(403).json({ message: "Forbidden" });
 
       const foundUser = await User.findOne({ email: decoded.email }).exec();
-      console.log("FOUNDUSER");
-      console.log(foundUser);
 
       const foundFamilyGroup = await FamilyGroup.findOne({
         familyGroupId: foundUser.familyGroupId,
       }).exec();
-
-      console.log("foundFamilyGroup");
-      console.log(foundFamilyGroup);
 
       const item = new GroceryItem({
         user: foundUser._id,
@@ -117,7 +96,6 @@ const postItem = asyncHandler(async (req, res, next) => {
 
 const updateItem = asyncHandler(async (req, res, next) => {
   const { quantity, itemName, isCompleted, id } = req.body;
-  console.log(quantity, itemName, isCompleted, id);
 
   const foundItem = await GroceryItem.findById(id).exec();
 
